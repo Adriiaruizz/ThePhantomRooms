@@ -1,0 +1,53 @@
+# File produced by Open Asset Import Library (http://www.assimp.sf.net)
+# (assimp v3.1.151580502)
+
+mtllib Colum2.mtl
+
+# 8 vertex positions
+v  8.36062 0 0
+v  0 0 0
+v  0 -11.973 0
+v  8.36062 -11.973 0
+v  8.36062 0 -8.48051
+v  8.36062 -11.973 -8.48051
+v  0 0 -8.48051
+v  0 -11.973 -8.48051
+
+# 12 UV coordinates
+vt 0.375 0.25 0
+vt 0.375 0 0
+vt 0.625 0 0
+vt 0.625 0.25 0
+vt 0.375 0.5 0
+vt 0.625 0.5 0
+vt 0.375 0.75 0
+vt 0.625 0.75 0
+vt 0.875 0 0
+vt 0.875 0.25 0
+vt 0.125 0.25 0
+vt 0.125 0 0
+
+# 6 vertex normals
+vn 0 0 1
+vn 1 6.12323e-17 0
+vn 0 0 -1
+vn -1 -6.12323e-17 0
+vn 6.12323e-17 -1 0
+vn -6.12323e-17 1 0
+
+# Mesh 'column_low:polySurface1_column_low:polySurface1_1001' with 12 faces
+g column_low:polySurface1_column_low:polySurface1_1001
+usemtl 1001
+f  1/1/1 2/2/1 3/3/1
+f  3/3/1 4/4/1 1/1/1
+f  5/5/2 1/1/2 4/4/2
+f  4/4/2 6/6/2 5/5/2
+f  7/7/3 5/5/3 6/6/3
+f  6/6/3 8/8/3 7/7/3
+f  2/2/4 7/7/4 8/8/4
+f  8/8/4 3/3/4 2/2/4
+f  4/4/5 3/3/5 8/9/5
+f  8/9/5 6/10/5 4/4/5
+f  5/11/6 7/12/6 2/2/6
+f  2/2/6 1/1/6 5/11/6
+

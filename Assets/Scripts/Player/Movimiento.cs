@@ -4,14 +4,16 @@ using UnityEngine;
 
 public class Movimiento : MonoBehaviour
 {
-    public float speed = 5f;           // Velocidad de movimiento
-    public float jumpForce = 5f;      // Fuerza del salto
-    public float sensitivity = 2f;    // Sensibilidad de la cámara
+    public float speed = 5f;           // Velocidad de movimiento normal
+    public float sprintSpeed = 8f;     // Velocidad al correr
+    public float jumpForce = 5f;       // Fuerza del salto
+    public float sensitivity = 2f;     // Sensibilidad de la cámara
 
-    private Rigidbody rb;             // Referencia al Rigidbody
+    private Rigidbody rb;              // Referencia al Rigidbody
     private Transform cameraTransform;
     private float rotationX = 0f;
-    private bool isGrounded = true;   // Verifica si el jugador está en el suelo
+    private bool isGrounded = true;    // Verifica si el jugador está en el suelo
+    private float currentSpeed;        // Velocidad actual del jugador
 
     void Start()
     {
@@ -19,6 +21,7 @@ public class Movimiento : MonoBehaviour
         rb.freezeRotation = true; // Evita que el Rigidbody afecte la rotación
         cameraTransform = GetComponentInChildren<Camera>().transform;
         Cursor.lockState = CursorLockMode.Locked; // Oculta y bloquea el cursor
+        currentSpeed = speed; // Inicializa la velocidad actual
     }
 
     void Update()
@@ -30,10 +33,20 @@ public class Movimiento : MonoBehaviour
 
     void HandleMovement()
     {
+        // Detecta si el jugador está corriendo
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            currentSpeed = sprintSpeed;
+        }
+        else
+        {
+            currentSpeed = speed;
+        }
+
         // Movimiento con WASD
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
-        Vector3 movement = (transform.forward * moveVertical + transform.right * moveHorizontal) * speed;
+        Vector3 movement = (transform.forward * moveVertical + transform.right * moveHorizontal) * currentSpeed;
 
         // Aplica movimiento solo en los ejes X y Z
         Vector3 velocity = new Vector3(movement.x, rb.velocity.y, movement.z);
