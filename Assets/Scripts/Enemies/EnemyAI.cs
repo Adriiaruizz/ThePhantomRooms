@@ -15,12 +15,14 @@ public class EnemyAI : MonoBehaviour
     public float idleTime = 2f; // Tiempo de espera en estado Idle
 
     private NavMeshAgent navMeshAgent;
+    private Animator animator; // Referencia al Animator
     private int currentPatrolIndex = 0;
     private float idleTimer = 0f;
 
     private void Start()
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
+        animator = GetComponent<Animator>(); // Obtén el componente Animator
         TransitionToState(EnemyState.Idle);
     }
 
@@ -50,6 +52,9 @@ public class EnemyAI : MonoBehaviour
                 HandleAttackState();
                 break;
         }
+
+        // Actualizar el parámetro Speed del Animator
+        animator.SetFloat("Speed", navMeshAgent.velocity.magnitude);
     }
 
     private void HandleIdleState()
