@@ -11,6 +11,7 @@ public class PlayerInteraction : MonoBehaviour
         if (Input.GetKeyDown(interactKey)) // Detectar la tecla de interacción
         {
             TryInteract();
+            TryInteract2();
         }
     }
 
@@ -24,6 +25,22 @@ public class PlayerInteraction : MonoBehaviour
         {
             // Intenta obtener el componente Interactable en el objeto alcanzado
             Interactable interactable = hit.collider.GetComponent<Interactable>();
+            if (interactable != null)
+            {
+                interactable.Interact(); // Llama al método de interacción del objeto
+            }
+        }
+    }
+    void TryInteract2()
+    {
+        Ray ray = new Ray(cameraTransform.position, cameraTransform.forward); // Raycast desde la cámara
+        RaycastHit hit;
+
+        // Realiza el raycast para detectar objetos en la distancia de interacción
+        if (Physics.Raycast(ray, out hit, interactDistance))
+        {
+            // Intenta obtener el componente Interactable en el objeto alcanzado
+            Interactable2 interactable = hit.collider.GetComponent<Interactable2>();
             if (interactable != null)
             {
                 interactable.Interact(); // Llama al método de interacción del objeto
