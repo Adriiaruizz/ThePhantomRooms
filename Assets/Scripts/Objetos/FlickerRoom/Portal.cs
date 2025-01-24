@@ -3,32 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-#if UNITY_EDITOR
-using UnityEditor; // Necesario para SceneAsset
-#endif
-
 public class ColorBasedCollider : MonoBehaviour
 {
     public Renderer objectRenderer; // Renderer del objeto
     public Collider physicalCollider; // Collider físico
     public Collider triggerCollider; // Collider de tipo trigger
 
-#if UNITY_EDITOR
-    public SceneAsset sceneAsset; // Permite arrastrar la escena desde el editor
-#endif
-    private string sceneToLoad; // Nombre de la escena a cargar
+    [SerializeField]
+    private string sceneToLoad; // Nombre de la escena a cargar (ingresado manualmente en el inspector)
 
     private void Start()
     {
-#if UNITY_EDITOR
-        if (sceneAsset != null)
+        if (string.IsNullOrEmpty(sceneToLoad))
         {
-            // Obtiene el nombre de la escena seleccionada
-            sceneToLoad = sceneAsset.name;
+            Debug.LogError("El nombre de la escena no está configurado. Por favor, ingrésalo en el inspector.");
         }
-#else
-        Debug.LogWarning("El script solo obtiene el nombre de la escena desde el editor.");
-#endif
 
         if (objectRenderer == null)
             objectRenderer = GetComponent<Renderer>();
@@ -73,9 +62,15 @@ public class ColorBasedCollider : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // Comprueba si el jugador toca el trigger y carga la escena
+        // Comprueba si el jugador toca el trigger
         if (triggerCollider.enabled && other.CompareTag("Player"))
         {
+            if (string.IsNullOrEmpty(sceneToLoad))
+            {
+                Debug.LogError("El nombre de la escena no está configurado. Por favor, verifica el inspector.");
+                return;
+            }
+
             Debug.Log("Cambiando a la escena: " + sceneToLoad);
 
             // Marca el booleano en la clase estática

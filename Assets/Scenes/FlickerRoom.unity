@@ -18938,7 +18938,7 @@ MonoBehaviour:
   objectRenderer: {fileID: 1649188409}
   physicalCollider: {fileID: 1649188408}
   triggerCollider: {fileID: 1649188414}
-  sceneAsset: {fileID: 102900000, guid: 86939e28faabf7c40a429df2c4ff7238, type: 3}
+  sceneToLoad: BackRooms
 --- !u!65 &1649188414
 BoxCollider:
   m_ObjectHideFlags: 0
