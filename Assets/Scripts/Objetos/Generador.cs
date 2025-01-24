@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -19,6 +18,9 @@ public class Interactable : MonoBehaviour
             {
                 obj.SetActive(false);
                 Debug.Log($"{obj.name} ha sido desactivado.");
+
+                // Guardar el estado del objeto desactivado
+                GlobalGameState.SaveObjectState(obj);
             }
         }
     }
