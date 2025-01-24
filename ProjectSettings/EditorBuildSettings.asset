@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/FlickerRoom.unity
     guid: 7e75955000e745c49954c79df1bdc418
+  - enabled: 1
+    path: Assets/Scenes/DarkRoom.unity
+    guid: e02821a06d1afab41bdf2091ee6afa31
   m_configObjects: {}
