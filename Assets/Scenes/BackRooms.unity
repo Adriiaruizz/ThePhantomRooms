@@ -15787,6 +15787,11 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!4 &745174263 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3461121492810169839, guid: 99d2266befb736a4f821dc4570d0fc2c, type: 3}
+  m_PrefabInstance: {fileID: 1328749796274721115}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &745322317
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -52637,6 +52642,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7197127545824414756, guid: 99d2266befb736a4f821dc4570d0fc2c, type: 3}
+      propertyPath: cameraTransform
+      value: 
+      objectReference: {fileID: 745174263}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
