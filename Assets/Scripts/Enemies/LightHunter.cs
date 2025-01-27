@@ -13,28 +13,37 @@ public class LightHunter : MonoBehaviour
     private int currentPatrolIndex = 0; // Índice del punto de patrulla actual
     private bool isChasing = false; // Si el enemigo está persiguiendo al jugador
     private UnityEngine.AI.NavMeshAgent navMeshAgent; // Agente de navegación
+    private Animator animator; // Referencia al Animator
+    private Collider enemyCollider; // Referencia al Collider del enemigo
 
     private void Start()
     {
         navMeshAgent = GetComponent<UnityEngine.AI.NavMeshAgent>();
+        animator = GetComponent<Animator>(); // Obtén el Animator
+        enemyCollider = GetComponent<Collider>(); // Obtén el Collider del enemigo
 
         if (patrolPoints.Length > 0)
         {
             navMeshAgent.destination = patrolPoints[currentPatrolIndex].position; // Establece el primer destino
             navMeshAgent.speed = patrolSpeed; // Establece la velocidad de patrulla
+            animator.SetBool("isChasing", false); // Inicia en modo patrulla
         }
     }
 
     private void Update()
     {
+        if (animator.GetBool("Muerte")) // Verifica si el enemigo está en estado de muerte
+        {
+            EnterDeathState();
+            return; // No ejecuta más lógica si está en estado de muerte
+        }
+
         if (flashlight.enabled)
         {
-            // Si la linterna está encendida, activa la persecución
             StartChasingPlayer();
         }
         else
         {
-            // Si la linterna está apagada, vuelve a patrullar
             StopChasingPlayer();
         }
 
@@ -52,7 +61,6 @@ public class LightHunter : MonoBehaviour
     {
         if (navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance && !navMeshAgent.pathPending)
         {
-            // Cambia al siguiente punto de patrulla
             currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoints.Length;
             navMeshAgent.destination = patrolPoints[currentPatrolIndex].position;
         }
@@ -62,7 +70,7 @@ public class LightHunter : MonoBehaviour
     {
         if (player != null)
         {
-            navMeshAgent.destination = player.position; // Sigue al jugador
+            navMeshAgent.destination = player.position;
         }
     }
 
@@ -71,7 +79,8 @@ public class LightHunter : MonoBehaviour
         if (!isChasing)
         {
             isChasing = true;
-            navMeshAgent.speed = chaseSpeed; // Cambia la velocidad a la de persecución
+            navMeshAgent.speed = chaseSpeed;
+            animator.SetBool("isChasing", true); // Cambia a la animación de persecución
             Debug.Log("El enemigo ha comenzado a perseguir al jugador.");
         }
     }
@@ -81,23 +90,35 @@ public class LightHunter : MonoBehaviour
         if (isChasing)
         {
             isChasing = false;
-            navMeshAgent.speed = patrolSpeed; // Vuelve a la velocidad de patrulla
+            navMeshAgent.speed = patrolSpeed;
             if (patrolPoints.Length > 0)
             {
-                navMeshAgent.destination = patrolPoints[currentPatrolIndex].position; // Retoma la patrulla
+                navMeshAgent.destination = patrolPoints[currentPatrolIndex].position;
             }
+            animator.SetBool("isChasing", false); // Cambia a la animación de patrulla
             Debug.Log("El enemigo ha dejado de perseguir al jugador.");
         }
     }
 
-    // Detectar la colisión con el jugador
+    private void EnterDeathState()
+    {
+        navMeshAgent.isStopped = true; // Detiene el movimiento del NavMeshAgent
+        navMeshAgent.velocity = Vector3.zero; // Asegura que el enemigo no se deslice
+
+        if (enemyCollider != null)
+        {
+            enemyCollider.enabled = false; // Desactiva las colisiones del enemigo
+        }
+
+        Debug.Log("El enemigo ha entrado en estado de muerte.");
+    }
+
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            // Si el enemigo toca al jugador, detén el juego
             Debug.Log("¡El enemigo ha matado al jugador!");
-            Time.timeScale = 0; // Detener el juego
+            Time.timeScale = 0;
         }
     }
 }

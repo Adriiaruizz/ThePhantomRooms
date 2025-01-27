@@ -4,56 +4,75 @@ using UnityEngine;
 
 public class Bombilla : MonoBehaviour
 {
-    public Light sceneLight; // La luz que se activará
-    public GameObject enemy; // El enemigo que entrará en estado "Muerte"
-    public string enemyDeathState = "Death"; // Nombre del estado de "Muerte" en el Animator del enemigo
+    public List<Light> lights; // Lista de luces seleccionables
+    public Animator enemyAnimator; // Referencia al Animator del enemigo
+    public GameObject prefab; // Prefab seleccionable que cambiará de color
+    public GameObject portal; // Referencia al portal
+    public string deathAnimationBool = "muerte"; // Nombre del condicional booleano en el Animator
 
-    private Animator enemyAnimator; // Referencia al Animator del enemigo
+    private bool isInteractable = true; // Indica si el objeto es interactuable
 
-    private void Start()
+    void Update()
     {
-        // Asegúrate de que la luz esté inicialmente desactivada
-        if (sceneLight != null)
-            sceneLight.enabled = false;
-
-        // Busca el Animator en el enemigo, si existe
-        if (enemy != null)
-            enemyAnimator = enemy.GetComponent<Animator>();
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        // Comprueba si el jugador interactúa con el objeto
-        if (other.CompareTag("Player"))
+        // Detectar interacción (puedes ajustar esto según cómo manejes la interacción)
+        if (isInteractable && Input.GetKeyDown(KeyCode.E)) // Por defecto, usa la tecla "E"
         {
-            ActivateInteraction();
+            Interact();
         }
     }
 
-    private void ActivateInteraction()
+    void Interact()
     {
-        // Activa la luz
-        if (sceneLight != null)
+        // Activar las luces de la lista
+        if (lights != null && lights.Count > 0)
         {
-            sceneLight.enabled = true;
+            foreach (Light light in lights)
+            {
+                if (light != null)
+                {
+                    light.enabled = true;
+                }
+            }
         }
 
-        // Cambia al estado "Muerte" del enemigo
-        if (enemyAnimator != null)
+        // Activar el booleano "muerte" en el Animator del enemigo
+        if (enemyAnimator != null && enemyAnimator.HasParameter(deathAnimationBool))
         {
-            enemyAnimator.SetTrigger(enemyDeathState);
+            enemyAnimator.SetBool(deathAnimationBool, true);
         }
 
-        // Desactiva el movimiento del enemigo
-        EnemyAI enemyAI = enemy.GetComponent<EnemyAI>();
-        if (enemyAI != null)
+        // Cambiar el color del prefab a azul
+        if (prefab != null)
         {
-            enemyAI.enabled = false;
+            Renderer prefabRenderer = prefab.GetComponent<Renderer>();
+            if (prefabRenderer != null)
+            {
+                prefabRenderer.material.color = Color.blue;
+            }
         }
 
-        // Desactiva este objeto interactuable
+        // Activar el portal
+        if (portal != null)
+        {
+            portal.SetActive(true);
+        }
+
+        // Apagar este objeto
+        isInteractable = false;
         gameObject.SetActive(false);
+    }
+}
 
-        Debug.Log("Interacción completada. Luz activada, enemigo desactivado, y objeto eliminado.");
+// Extensión para verificar si un parámetro existe en el Animator
+public static class AnimatorExtensions
+{
+    public static bool HasParameter(this Animator animator, string parameterName)
+    {
+        foreach (AnimatorControllerParameter param in animator.parameters)
+        {
+            if (param.name == parameterName)
+                return true;
+        }
+        return false;
     }
 }
