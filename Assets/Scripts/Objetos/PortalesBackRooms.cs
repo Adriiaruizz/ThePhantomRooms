@@ -4,17 +4,30 @@ using UnityEngine;
 
 public class PortalesBackRooms : MonoBehaviour
 {
-    public GameObject objectToDisable; // Objeto que se desactivará si el booleano es true
+    public GameObject PortalFlickerRoom; // Objeto que se desactivará si el booleano es true
+    public GameObject PortalDarkRoom;
 
     private void Start()
     {
         // Comprueba el valor del booleano y desactiva el objeto si es true
         if (GlobalGameState.FlickerRoomCompleta)
         {
-            if (objectToDisable != null)
+            if (PortalFlickerRoom != null)
             {
-                objectToDisable.SetActive(false);
-                Debug.Log($"{objectToDisable.name} ha sido desactivado porque el jugador entró en el portal.");
+                PortalFlickerRoom.SetActive(false);
+                Debug.Log($"{PortalFlickerRoom.name} ha sido desactivado porque el jugador entró en el portal.");
+            }
+            else
+            {
+                Debug.LogWarning("No se ha asignado un objeto para desactivar en el script PortalesBackRooms.");
+            }
+        }
+        if (GlobalGameState.DarkRoomsCompletas)
+        {
+            if (PortalDarkRoom != null)
+            {
+                PortalDarkRoom.SetActive(false);
+                Debug.Log($"{PortalDarkRoom.name} ha sido desactivado porque el jugador entró en el portal.");
             }
             else
             {

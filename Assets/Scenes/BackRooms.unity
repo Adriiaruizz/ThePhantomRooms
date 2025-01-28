@@ -11414,7 +11414,7 @@ GameObject:
   - component: {fileID: 527221244}
   - component: {fileID: 527221243}
   m_Layer: 0
-  m_Name: PortalAbierto/Cerrado (1)
+  m_Name: PortalDressingRoom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11450,8 +11450,8 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 1
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
   m_Radius: 0.5
@@ -14054,7 +14054,7 @@ GameObject:
   - component: {fileID: 644256193}
   - component: {fileID: 644256192}
   m_Layer: 0
-  m_Name: PortalAbierto/Cerrado (1)
+  m_Name: PortalDayCare
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14090,8 +14090,8 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 1
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
   m_Radius: 0.5
@@ -24788,7 +24788,7 @@ GameObject:
   - component: {fileID: 1117763147}
   - component: {fileID: 1117763146}
   m_Layer: 0
-  m_Name: PortalAbierto/Cerrado (1)
+  m_Name: PortalPuzzleRoom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -24824,8 +24824,8 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 1
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
   m_Radius: 0.5
@@ -28865,8 +28865,9 @@ GameObject:
   - component: {fileID: 1252899780}
   - component: {fileID: 1252899779}
   - component: {fileID: 1252899778}
+  - component: {fileID: 1252899781}
   m_Layer: 0
-  m_Name: PortalAbierto/Cerrado (1)
+  m_Name: PortalDarkRoom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -28902,8 +28903,8 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 1
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
   m_Radius: 0.5
@@ -28958,6 +28959,20 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1252899776}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1252899781
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1252899776}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9cea60f337825684eb10ecea37cd6a35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetScene: DarkRoom
+  delayBeforeTeleport: 0
 --- !u!1001 &1254556492
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -40732,7 +40747,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eeafc97ec08f1654ea57ce890492540e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectToDisable: {fileID: 6634223127104856405}
+  PortalFlickerRoom: {fileID: 6634223127104856405}
+  PortalDarkRoom: {fileID: 1252899776}
 --- !u!1 &1747698882
 GameObject:
   m_ObjectHideFlags: 0
@@ -53412,7 +53428,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3128963118483800897, guid: 803d0e4e4b6c15b4996875d4248affa0, type: 3}
       propertyPath: m_Name
-      value: PortalAbierto/Cerrado (1)
+      value: PortalFlickerRoom
       objectReference: {fileID: 0}
     - target: {fileID: 6808246997757176974, guid: 803d0e4e4b6c15b4996875d4248affa0, type: 3}
       propertyPath: m_Center.y
