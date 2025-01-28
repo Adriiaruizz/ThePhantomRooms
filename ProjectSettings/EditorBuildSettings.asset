@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/DarkRoom.unity
     guid: e02821a06d1afab41bdf2091ee6afa31
+  - enabled: 1
+    path: Assets/Scenes/DressingRoom.unity
+    guid: 5b09a03e2625acb4abf277aeacbbc71f
   m_configObjects: {}

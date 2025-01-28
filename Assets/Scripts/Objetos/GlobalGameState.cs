@@ -10,6 +10,7 @@ public static class GlobalGameState
     // Booleano global que indica si el jugador ha entrado al portal
     public static bool FlickerRoomCompleta = false;
     public static bool DarkRoomsCompletas = false;
+    public static bool DressingRoomCompleta = false;
 
     // Método para guardar el estado de un objeto
     public static void SaveObjectState(GameObject obj)
