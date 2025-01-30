@@ -11,6 +11,8 @@ public static class GlobalGameState
     public static bool FlickerRoomCompleta = false;
     public static bool DarkRoomsCompletas = false;
     public static bool DressingRoomCompleta = false;
+    public static bool DaycareCompleta = false;
+    public static bool PuzzleRoom = false;
 
     // Método para guardar el estado de un objeto
     public static void SaveObjectState(GameObject obj)

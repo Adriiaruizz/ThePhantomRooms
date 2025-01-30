@@ -14068,6 +14068,7 @@ GameObject:
   - component: {fileID: 644256194}
   - component: {fileID: 644256193}
   - component: {fileID: 644256192}
+  - component: {fileID: 644256195}
   m_Layer: 0
   m_Name: PortalDayCare
   m_TagString: Untagged
@@ -14161,6 +14162,20 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 644256190}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &644256195
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 644256190}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9cea60f337825684eb10ecea37cd6a35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetScene: DayCare
+  delayBeforeTeleport: 0
 --- !u!1001 &650401310
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24802,6 +24817,7 @@ GameObject:
   - component: {fileID: 1117763148}
   - component: {fileID: 1117763147}
   - component: {fileID: 1117763146}
+  - component: {fileID: 1117763149}
   m_Layer: 0
   m_Name: PortalPuzzleRoom
   m_TagString: Untagged
@@ -24895,6 +24911,20 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1117763144}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1117763149
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1117763144}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9cea60f337825684eb10ecea37cd6a35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetScene: PuzzleRoom
+  delayBeforeTeleport: 0
 --- !u!1001 &1118821427
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -40765,6 +40795,8 @@ MonoBehaviour:
   PortalFlickerRoom: {fileID: 6634223127104856405}
   PortalDarkRoom: {fileID: 1252899776}
   PortalDressingRoom: {fileID: 527221241}
+  PortalPuzzleRoom: {fileID: 1117763144}
+  DayCare: {fileID: 644256190}
 --- !u!1 &1747698882
 GameObject:
   m_ObjectHideFlags: 0
