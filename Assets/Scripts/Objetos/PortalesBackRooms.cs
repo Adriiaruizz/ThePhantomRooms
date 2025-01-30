@@ -6,6 +6,7 @@ public class PortalesBackRooms : MonoBehaviour
 {
     public GameObject PortalFlickerRoom; // Objeto que se desactivará si el booleano es true
     public GameObject PortalDarkRoom;
+    public GameObject PortalDressingRoom;
 
     private void Start()
     {
@@ -28,6 +29,18 @@ public class PortalesBackRooms : MonoBehaviour
             {
                 PortalDarkRoom.SetActive(false);
                 Debug.Log($"{PortalDarkRoom.name} ha sido desactivado porque el jugador entró en el portal.");
+            }
+            else
+            {
+                Debug.LogWarning("No se ha asignado un objeto para desactivar en el script PortalesBackRooms.");
+            }
+        }
+        if (GlobalGameState.DressingRoomCompleta)
+        {
+            if (PortalDressingRoom != null)
+            {
+                PortalDressingRoom.SetActive(false);
+                Debug.Log($"{PortalDressingRoom.name} ha sido desactivado porque el jugador entró en el portal.");
             }
             else
             {
