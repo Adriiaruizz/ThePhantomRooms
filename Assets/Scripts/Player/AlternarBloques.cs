@@ -1,8 +1,21 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class AlternarBloques : MonoBehaviour
 {
     private bool estadoAzul = true; // Comienza en el estado Azul
+    private List<GameObject> bloquesAzules = new List<GameObject>();
+    private List<GameObject> bloquesRojos = new List<GameObject>();
+
+    void Start()
+    {
+        // Guarda todos los objetos en listas al iniciar el juego
+        bloquesAzules.AddRange(GameObject.FindGameObjectsWithTag("Azul"));
+        bloquesRojos.AddRange(GameObject.FindGameObjectsWithTag("Rojo"));
+
+        // Aplica el estado inicial
+        AlternarEstado();
+    }
 
     void Update()
     {
@@ -15,22 +28,17 @@ public class AlternarBloques : MonoBehaviour
     void AlternarEstado()
     {
         estadoAzul = !estadoAzul; // Cambia entre estados
-        string estadoActual = estadoAzul ? "Azul" : "Rojo";
-
-        // Busca todos los objetos con las etiquetas "Azul" y "Rojo"
-        GameObject[] bloquesAzules = GameObject.FindGameObjectsWithTag("Azul");
-        GameObject[] bloquesRojos = GameObject.FindGameObjectsWithTag("Rojo");
 
         // Activa/Desactiva según el estado actual
         foreach (GameObject bloque in bloquesAzules)
         {
-            bloque.SetActive(estadoAzul);
+            if (bloque != null) bloque.SetActive(estadoAzul);
         }
         foreach (GameObject bloque in bloquesRojos)
         {
-            bloque.SetActive(!estadoAzul);
+            if (bloque != null) bloque.SetActive(!estadoAzul);
         }
 
-        Debug.Log("Estado cambiado a: " + estadoActual);
+        Debug.Log("Estado cambiado a: " + (estadoAzul ? "Azul" : "Rojo"));
     }
 }
