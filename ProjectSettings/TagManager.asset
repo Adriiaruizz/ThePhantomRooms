@@ -10,6 +10,7 @@ TagManager:
   - ObjetoMovil
   - Azul
   - Rojo
+  - tp
   layers:
   - Default
   - TransparentFX
