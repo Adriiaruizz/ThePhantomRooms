@@ -1,7 +1,7 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI; // Importar librería para manejar botones
 
 public class Aplastar : MonoBehaviour
 {
@@ -11,10 +11,34 @@ public class Aplastar : MonoBehaviour
     public float waitTimeAtA = 2f; // Tiempo de espera en posición A
     public float waitTimeAtB = 2f; // Tiempo de espera en posición B
 
+    public AudioSource impactSound; // Sonido al llegar a la posición B
+    public Canvas gameOverCanvas; // Canvas de fin de juego
+
+    // Botones del Canvas
+    public Button restartButton;
+    public Button exitButton;
+
     private Coroutine currentRoutine;
 
     private void Start()
     {
+        // Asegurar que el canvas de Game Over esté desactivado al inicio
+        if (gameOverCanvas != null)
+        {
+            gameOverCanvas.gameObject.SetActive(false); // Desactivamos el Canvas al inicio
+        }
+
+        // Asignar funciones a los botones
+        if (restartButton != null)
+        {
+            restartButton.onClick.AddListener(RestartGame);
+        }
+
+        if (exitButton != null)
+        {
+            exitButton.onClick.AddListener(ExitGame);
+        }
+
         // Comienza el ciclo de caída y subida
         currentRoutine = StartCoroutine(FallAndRiseCycle());
     }
@@ -23,16 +47,15 @@ public class Aplastar : MonoBehaviour
     {
         while (true)
         {
-            // Esperar en la posición A
             yield return new WaitForSeconds(waitTimeAtA);
-
-            // Mover hacia la posición B
             yield return StartCoroutine(MoveToPosition(positionB.position));
 
-            // Esperar en la posición B
-            yield return new WaitForSeconds(waitTimeAtB);
+            if (impactSound != null)
+            {
+                impactSound.Play();
+            }
 
-            // Mover de regreso a la posición A
+            yield return new WaitForSeconds(waitTimeAtB);
             yield return StartCoroutine(MoveToPosition(positionA.position));
         }
     }
@@ -41,7 +64,7 @@ public class Aplastar : MonoBehaviour
     {
         Vector3 startPosition = transform.position;
         float distance = Vector3.Distance(startPosition, targetPosition);
-        float duration = distance / movementSpeed; // Calcula la duración en función de la velocidad
+        float duration = distance / movementSpeed;
 
         float elapsedTime = 0f;
 
@@ -52,12 +75,11 @@ public class Aplastar : MonoBehaviour
             yield return null;
         }
 
-        transform.position = targetPosition; // Asegurarse de llegar exactamente al destino
+        transform.position = targetPosition;
     }
 
     private void OnDisable()
     {
-        // Detiene la rutina si el objeto se desactiva
         if (currentRoutine != null)
         {
             StopCoroutine(currentRoutine);
@@ -66,11 +88,39 @@ public class Aplastar : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // Verifica si el objeto que colisiona es el jugador
         if (other.CompareTag("Player"))
         {
             Debug.Log("El jugador ha sido aplastado. Fin del juego.");
-            Time.timeScale = 0; // Detener el tiempo (pausar el juego)
+
+            Time.timeScale = 0;
+
+            // Asegurarse de que el canvas de Game Over se active
+            if (gameOverCanvas != null)
+            {
+                gameOverCanvas.gameObject.SetActive(true); // Activar el Canvas
+            }
+            else
+            {
+                Debug.LogError("Game Over Canvas no asignado en el Inspector.");
+            }
+
+            // Habilitar el cursor para que el jugador pueda interactuar con el menú
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
+    }
+
+    // Método para el botón "Reintentar"
+    public void RestartGame()
+    {
+        Time.timeScale = 1; // Restablecer el tiempo antes de reiniciar
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name); // Recargar la escena actual
+    }
+
+    // Método para el botón "Salir"
+    public void ExitGame()
+    {
+        Debug.Log("Saliendo del juego...");
+        Application.Quit(); // Cerrar la aplicación
     }
 }

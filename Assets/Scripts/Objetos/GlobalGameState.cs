@@ -7,19 +7,27 @@ public static class GlobalGameState
     // Diccionario para almacenar el estado de activación/desactivación de los objetos
     public static Dictionary<string, bool> objectStates = new Dictionary<string, bool>();
 
-    // Booleano global que indica si el jugador ha entrado al portal
+    // Estado de las habitaciones completadas
     public static bool FlickerRoomCompleta = false;
     public static bool DarkRoomsCompletas = false;
     public static bool DressingRoomCompleta = false;
     public static bool DaycareCompleta = false;
     public static bool PuzzleRoom = false;
 
+    // Misión actual
+    public static string MisionActual = "Activa el generador"; // Misión inicial por defecto
+
+    // Método para actualizar la misión
+    public static void ActualizarMision(string nuevaMision)
+    {
+        MisionActual = nuevaMision;
+    }
+
     // Método para guardar el estado de un objeto
     public static void SaveObjectState(GameObject obj)
     {
         if (obj != null)
         {
-            // Guarda el estado del objeto (activado o desactivado)
             objectStates[obj.name] = obj.activeSelf;
         }
     }
@@ -29,7 +37,6 @@ public static class GlobalGameState
     {
         if (obj != null && objectStates.ContainsKey(obj.name))
         {
-            // Restaura el estado del objeto
             obj.SetActive(objectStates[obj.name]);
         }
     }

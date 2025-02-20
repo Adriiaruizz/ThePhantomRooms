@@ -1,42 +1,72 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class LightHunter : MonoBehaviour
 {
-    public Transform[] patrolPoints; // Array de puntos de patrulla
-    public float patrolSpeed = 2f; // Velocidad de patrulla
-    public float chaseSpeed = 4f; // Velocidad de persecución
-    public Transform player; // Referencia al jugador
-    public Light flashlight; // Linterna del jugador
+    public Transform[] patrolPoints;
+    public float patrolSpeed = 2f;
+    public float chaseSpeed = 4f;
+    public Transform player;
+    public Light flashlight;
+    public AudioClip sonidoPatrullaje;
+    public float maxVolumeDistance = 10f;
+    public float minVolumeDistance = 50f;
+    public Canvas jumpscareCanvas;
+    public AudioClip jumpscareSound;
+    public Canvas gameOverCanvas;
 
-    private int currentPatrolIndex = 0; // Índice del punto de patrulla actual
-    private bool isChasing = false; // Si el enemigo está persiguiendo al jugador
-    private UnityEngine.AI.NavMeshAgent navMeshAgent; // Agente de navegación
-    private Animator animator; // Referencia al Animator
-    private Collider enemyCollider; // Referencia al Collider del enemigo
+    public Button restartButton; // Referencia al botón de reinicio
+    public Button exitButton; // Referencia al botón de salida
+
+    private int currentPatrolIndex = 0;
+    private bool isChasing = false;
+    private bool hasTriggeredJumpscare = false;
+    private UnityEngine.AI.NavMeshAgent navMeshAgent;
+    private Animator animator;
+    private Collider enemyCollider;
+    private AudioSource audioSource;
 
     private void Start()
     {
         navMeshAgent = GetComponent<UnityEngine.AI.NavMeshAgent>();
-        animator = GetComponent<Animator>(); // Obtén el Animator
-        enemyCollider = GetComponent<Collider>(); // Obtén el Collider del enemigo
+        animator = GetComponent<Animator>();
+        enemyCollider = GetComponent<Collider>();
+        audioSource = gameObject.AddComponent<AudioSource>();
+
+        jumpscareCanvas.gameObject.SetActive(false);
+        gameOverCanvas.gameObject.SetActive(false);
+
+        // Asignar los eventos de los botones para reiniciar o salir
+        if (restartButton != null)
+        {
+            restartButton.onClick.AddListener(RestartGame);
+        }
+
+        if (exitButton != null)
+        {
+            exitButton.onClick.AddListener(ExitGame);
+        }
+
+        // Bloquear el cursor al iniciar la partida
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
 
         if (patrolPoints.Length > 0)
         {
-            navMeshAgent.destination = patrolPoints[currentPatrolIndex].position; // Establece el primer destino
-            navMeshAgent.speed = patrolSpeed; // Establece la velocidad de patrulla
-            animator.SetBool("isChasing", false); // Inicia en modo patrulla
+            navMeshAgent.destination = patrolPoints[currentPatrolIndex].position;
+            navMeshAgent.speed = patrolSpeed;
+            animator.SetBool("isChasing", false);
         }
+
+        audioSource.loop = true;
+        audioSource.playOnAwake = false;
     }
 
     private void Update()
     {
-        if (animator.GetBool("Muerte")) // Verifica si el enemigo está en estado de muerte
-        {
-            EnterDeathState();
-            return; // No ejecuta más lógica si está en estado de muerte
-        }
+        if (hasTriggeredJumpscare) return; // Si el jumpscare ya se activó, no hacer nada más
 
         if (flashlight.enabled)
         {
@@ -50,11 +80,15 @@ public class LightHunter : MonoBehaviour
         if (!isChasing)
         {
             Patrol();
+            PlaySound(true);
         }
         else
         {
             ChasePlayer();
+            PlaySound(true);
         }
+
+        AdjustSoundVolume();
     }
 
     private void Patrol()
@@ -80,7 +114,7 @@ public class LightHunter : MonoBehaviour
         {
             isChasing = true;
             navMeshAgent.speed = chaseSpeed;
-            animator.SetBool("isChasing", true); // Cambia a la animación de persecución
+            animator.SetBool("isChasing", true);
             Debug.Log("El enemigo ha comenzado a perseguir al jugador.");
         }
     }
@@ -95,30 +129,100 @@ public class LightHunter : MonoBehaviour
             {
                 navMeshAgent.destination = patrolPoints[currentPatrolIndex].position;
             }
-            animator.SetBool("isChasing", false); // Cambia a la animación de patrulla
+            animator.SetBool("isChasing", false);
             Debug.Log("El enemigo ha dejado de perseguir al jugador.");
         }
     }
 
-    private void EnterDeathState()
+    private void PlaySound(bool play)
     {
-        navMeshAgent.isStopped = true; // Detiene el movimiento del NavMeshAgent
-        navMeshAgent.velocity = Vector3.zero; // Asegura que el enemigo no se deslice
-
-        if (enemyCollider != null)
+        if (play && !audioSource.isPlaying && sonidoPatrullaje != null)
         {
-            enemyCollider.enabled = false; // Desactiva las colisiones del enemigo
+            audioSource.clip = sonidoPatrullaje;
+            audioSource.Play();
         }
+        else if (!play && audioSource.isPlaying)
+        {
+            audioSource.Stop();
+        }
+    }
 
-        Debug.Log("El enemigo ha entrado en estado de muerte.");
+    private void AdjustSoundVolume()
+    {
+        if (audioSource.isPlaying)
+        {
+            float distance = Vector3.Distance(player.position, transform.position);
+            float volume = Mathf.Clamp01(1 - (distance - maxVolumeDistance) / (minVolumeDistance - maxVolumeDistance));
+            audioSource.volume = volume;
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Player"))
+        if (collision.gameObject.CompareTag("Player") && !hasTriggeredJumpscare)
         {
+            hasTriggeredJumpscare = true;
             Debug.Log("¡El enemigo ha matado al jugador!");
-            Time.timeScale = 0;
+            TriggerJumpscare();
         }
+    }
+
+    private void TriggerJumpscare()
+    {
+        jumpscareCanvas.gameObject.SetActive(true);
+
+        if (jumpscareSound != null)
+        {
+            AudioSource.PlayClipAtPoint(jumpscareSound, transform.position);
+        }
+
+        // Detener al enemigo
+        navMeshAgent.isStopped = true;
+        navMeshAgent.velocity = Vector3.zero;
+
+        // Desactivar controles del jugador si tiene un script de movimiento
+        if (player.GetComponent<Movimiento>() != null)
+        {
+            player.GetComponent<Movimiento>().enabled = false;
+        }
+
+        // Detener el tiempo del juego
+        Time.timeScale = 0;
+
+        StartCoroutine(DisableJumpscare());
+    }
+
+    private IEnumerator DisableJumpscare()
+    {
+        yield return new WaitForSecondsRealtime(2f);
+        jumpscareCanvas.gameObject.SetActive(false);
+        ShowGameOverScreen();
+    }
+
+    private void ShowGameOverScreen()
+    {
+        gameOverCanvas.gameObject.SetActive(true);
+
+        // Desbloquear el cursor para que el jugador pueda usar los botones
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
+
+    // Método para reiniciar la escena
+    public void RestartGame()
+    {
+        Time.timeScale = 1; // Reactivar el tiempo antes de reiniciar
+
+        // Bloquear el cursor al reiniciar la partida
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    // Método para salir del juego
+    public void ExitGame()
+    {
+        Application.Quit();
     }
 }

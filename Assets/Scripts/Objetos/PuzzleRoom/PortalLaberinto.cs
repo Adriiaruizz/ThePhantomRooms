@@ -4,7 +4,17 @@ using System.Collections;
 public class PortalLaberinto : MonoBehaviour
 {
     public Transform portalDestino; // Referencia al otro portal
+    public AudioClip sonidoPortal; // Sonido al teletransportar
+
     private bool puedeTeletransportar = true; // Evitar teletransportes dobles
+    private AudioSource audioSource; // Fuente de audio
+
+    private void Start()
+    {
+        // Añadir un AudioSource si no existe
+        audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource.playOnAwake = false;
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -17,6 +27,12 @@ public class PortalLaberinto : MonoBehaviour
     private IEnumerator Teletransportar(Collider objeto)
     {
         puedeTeletransportar = false; // Evitar múltiples teletransportes
+
+        // Reproducir sonido si hay un clip asignado
+        if (sonidoPortal != null)
+        {
+            audioSource.PlayOneShot(sonidoPortal);
+        }
 
         // Guardar la velocidad si el objeto tiene un Rigidbody
         Rigidbody rb = objeto.GetComponent<Rigidbody>();
