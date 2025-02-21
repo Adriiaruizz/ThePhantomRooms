@@ -1,59 +1,144 @@
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.SceneManagement; // Para cargar la escena de fin de juego
+using UnityEngine.SceneManagement;
+using UnityEngine.UI; // Necesario para manejar UI
 
 public class Dolly : MonoBehaviour
 {
-    public Transform player;   // Referencia al jugador
+    public Transform player; // Referencia al jugador
     public float stopDistance = 1f; // Distancia mínima para detenerse
     private Renderer enemyRenderer;
     private bool isChasing = false;
+    private bool hasCaughtPlayer = false; // Evita que el jumpscare se active varias veces
 
-    private Animator animator; // Referencia al componente Animator
+    private Animator animator; // Referencia al Animator
     private NavMeshAgent navMeshAgent; // Referencia al NavMeshAgent
+    private AudioSource audioSource; // Fuente de audio
+    private Collider enemyCollider; // Referencia al Collider del enemigo
+
+    public AudioClip chaseSound; // Sonido de persecución
+    public GameObject jumpscareCanvas; // Canvas del jumpscare
+    public GameObject gameOverCanvas; // Canvas del menú de Game Over
+    public AudioClip jumpscareSound; // Sonido del jumpscare
+
+    public Button restartButton; // Botón de reintentar
+    public Button exitButton; // Botón de salir
 
     void Start()
     {
         enemyRenderer = GetComponent<Renderer>();
-        animator = GetComponent<Animator>(); // Obtener el Animator
-        navMeshAgent = GetComponent<NavMeshAgent>(); // Obtener el NavMeshAgent
+        animator = GetComponent<Animator>();
+        navMeshAgent = GetComponent<NavMeshAgent>();
+        audioSource = GetComponent<AudioSource>();
+        enemyCollider = GetComponent<Collider>(); // Obtener el Collider del enemigo
+
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
+
+        audioSource.clip = chaseSound;
+        audioSource.loop = true;
+        audioSource.playOnAwake = false;
+
+        // Desactivar los Canvas al inicio
+        if (jumpscareCanvas != null) jumpscareCanvas.SetActive(false);
+        if (gameOverCanvas != null) gameOverCanvas.SetActive(false);
+
+        // Esconder y bloquear el cursor al inicio
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
+        // Asignar eventos a los botones si existen
+        if (restartButton != null) restartButton.onClick.AddListener(RestartGame);
+        if (exitButton != null) exitButton.onClick.AddListener(ExitGame);
     }
 
     void Update()
     {
+        if (hasCaughtPlayer) return; // Si el enemigo atrapó al jugador, no seguir moviéndose
+
         if (enemyRenderer.isVisible)
         {
-            // Detener el movimiento cuando el enemigo está visible en la cámara
             isChasing = false;
-            navMeshAgent.isStopped = true; // Detener al NavMeshAgent cuando está visible
+            navMeshAgent.isStopped = true;
         }
         else
         {
-            // Empezar a perseguir al jugador si no está visible
             isChasing = true;
-            navMeshAgent.isStopped = false; // Reanudar el movimiento del NavMeshAgent
+            navMeshAgent.isStopped = false;
         }
 
-        // Actualizar el parámetro "isChasing" en el Animator
         animator.SetBool("isChasing", isChasing);
 
         if (isChasing)
         {
-            // Mover al enemigo hacia el jugador usando el NavMeshAgent
             navMeshAgent.SetDestination(player.position);
+
+            if (!audioSource.isPlaying)
+            {
+                audioSource.Play();
+            }
+        }
+        else
+        {
+            if (audioSource.isPlaying)
+            {
+                audioSource.Stop();
+            }
         }
     }
 
-    // Detectar la colisión con el jugador
     private void OnTriggerEnter(Collider other)
     {
+        if (hasCaughtPlayer) return; // Evita que se active varias veces
+
         if (other.CompareTag("Player"))
         {
-            // Terminar el juego cuando el jugador entra en el collider del enemigo
-            Debug.Log("¡El jugador ha muerto!");
-            Time.timeScale = 0;
-            // Aquí puedes cargar una escena de fin de juego
-            //SceneManager.LoadScene("GameOver"); // Reemplaza "GameOver" con el nombre de tu escena de fin de juego
+            hasCaughtPlayer = true; // Marcar que el jugador ha sido atrapado
+            navMeshAgent.isStopped = true; // Detener al enemigo
+            enemyCollider.enabled = false; // Desactivar el collider del enemigo
+
+            if (jumpscareCanvas != null) jumpscareCanvas.SetActive(true);
+
+            if (jumpscareSound != null)
+            {
+                audioSource.clip = jumpscareSound;
+                audioSource.loop = false;
+                audioSource.Play();
+
+                Invoke("ShowGameOver", jumpscareSound.length);
+            }
+            else
+            {
+                ShowGameOver();
+            }
         }
+    }
+
+    void ShowGameOver()
+    {
+        if (jumpscareCanvas != null) jumpscareCanvas.SetActive(false);
+        if (gameOverCanvas != null) gameOverCanvas.SetActive(true);
+
+        // Habilitar el cursor para interactuar con los botones
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
+
+    public void RestartGame()
+    {
+        Time.timeScale = 1;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+
+        // Ocultar y bloquear el cursor nuevamente al reiniciar
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+
+    public void ExitGame()
+    {
+        Application.Quit();
+        Debug.Log("Salir del juego");
     }
 }

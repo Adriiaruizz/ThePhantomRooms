@@ -9,7 +9,18 @@ public class LamparasInteractable : MonoBehaviour
     public List<GameObject> prefabsToActivate; // Lista de prefabs que se activarán
     public string interactableTag = "Player"; // Solo objetos con este tag pueden interactuar
     public KeyCode interactionKey = KeyCode.E; // Tecla para interactuar
+    public AudioClip interactionSound; // Sonido a reproducir cuando el objeto sea interactuable
+
     private bool isInteractable = false; // Verifica si el objeto puede ser interactuado
+    private AudioSource audioSource; // Fuente de audio
+
+    void Start()
+    {
+        // Agregar un AudioSource al objeto si no tiene uno
+        audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource.playOnAwake = false;
+        audioSource.loop = false; // Asegurarse de que no se repita en bucle
+    }
 
     void Update()
     {
@@ -27,6 +38,12 @@ public class LamparasInteractable : MonoBehaviour
         {
             isInteractable = true;
             Debug.Log("Jugador dentro del rango de interacción.");
+
+            // Reproducir sonido una sola vez
+            if (interactionSound != null)
+            {
+                audioSource.PlayOneShot(interactionSound);
+            }
         }
     }
 
